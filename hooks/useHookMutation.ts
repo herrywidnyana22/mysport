@@ -1,12 +1,13 @@
+'use client'
+
 import { useState } from "react"
 import { useMutation } from "convex/react"
-
 
 export const useHookMutation = (func: any) =>{
     const [isPending, setIsPending] = useState(false)
     const apiMutation = useMutation(func)
 
-    const mutate = async(payload: any) =>{
+    const execute = async(payload: any) =>{
         setIsPending(true)
         return await apiMutation(payload)
         .finally(() => setIsPending(false))
@@ -19,7 +20,7 @@ export const useHookMutation = (func: any) =>{
     }
 
     return {
-        mutate,
+        execute,
         isPending
     }
 }

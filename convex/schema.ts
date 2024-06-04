@@ -6,18 +6,18 @@ import { Validator, v  } from "convex/values";
 
 
 export const userSchema = {
-    email: v.string(),
     name: v.optional(v.string()),
+    username: v.string(),
+    password: v.string(),
+    email: v.string(),
     emailVerified: v.optional(v.number()),
     image: v.optional(v.string()),
-    username: v.string(),
-    hashPassword: v.string(),
     role: v.union(
       v.literal('PANITIA'),
       v.literal('ADMIN')
     ),
-    pos: v.array(v.id('pos')),
-    sessions: v.array(v.id('sessions')),
+    // pos: v.optional(v.array(v.id('pos'))),
+    // sessions: v.optional(v.array(v.id('sessions'))),
   };
   
 export const sessionSchema = {
