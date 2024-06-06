@@ -1,0 +1,87 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Session {
+  id           String   @id @default(uuid())
+  sessionToken String   @unique
+  expires      DateTime
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum Role {
+  PANITIA
+  ADMIN
+}
+
+model User {
+  id        String    @id @default(uuid())
+  name      String
+  username  String    @unique
+  password  String
+  image     String?
+  role      Role      @default(PANITIA)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  sessions  Session[]
+  pos       Pos[]
+}
+
+model Category {
+  id           String    @id @default(uuid())
+  categoryName String
+  startAt      DateTime?
+  isEnded      Boolean   @default(false)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  peserta      Peserta[]
+  pos          Pos[]
+}
+
+model Pos {
+  id          String       @id @default(uuid())
+  posName     String
+  isPosFinish Boolean?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  categoryID  String
+  category    Category     @relation(fields: [categoryID], references: [id], onDelete: Cascade)
+  userID      String?
+  user        User?        @relation(fields: [userID], references: [id], onUpdate: NoAction, onDelete: SetNull)
+  peserta     Peserta[]    @relation("PesertaPos")
+  PesertaPos  PesertaPos[]
+}
+
+model Peserta {
+  id         String       @id @default(uuid())
+  name       String?
+  birthday   DateTime?
+  alamat     String?
+  email      String?
+  number     String?
+  waktu      DateTime?
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  categoryID String?
+  category   Category?    @relation(fields: [categoryID], references: [id], onDelete: Cascade)
+  pos        Pos[]        @relation("PesertaPos")
+  PesertaPos PesertaPos[]
+}
+
+model PesertaPos {
+  pesertaId String
+  posId     String
+  createdAt DateTime @default(now())
+
+  peserta Peserta @relation(fields: [pesertaId], references: [id], onDelete: Cascade)
+  pos     Pos     @relation(fields: [posId], references: [id], onDelete: Cascade)
+
+  @@id([pesertaId, posId])
+}
