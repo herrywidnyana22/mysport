@@ -1,0 +1,20 @@
+import { User, Pos, Peserta, Category,  } from "@prisma/client";
+
+interface ApiResponProps{
+    code: number, 
+    status: 'success' | 'error', 
+    msg: string, 
+    data: any
+}
+
+export const respon = ({
+    code,
+    status,
+    msg,
+    data
+}: ApiResponProps) => ({
+    code,
+    status,
+    msg,
+    data,
+});

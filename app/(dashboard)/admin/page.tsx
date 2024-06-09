@@ -1,11 +1,24 @@
-import { getSession } from "next-auth/react";
-import { redirect } from "next/navigation";
+import { auth, signOut } from "@/auth";
+import { Button } from "@/components/ui/button";
 
-const AdminPage = () =>{
+const AdminPage = async() =>{
 
+    const userSession = await auth()
+    const onLogout = async() =>{
+        'use server'
+        await signOut({
+            redirectTo: "/auth/login"
+        })
+    }
     return(
         <div>
-            ADMIN PAGE
+            {JSON.stringify({userSession})}
+            <form action={onLogout}>
+                <Button type="submit">
+                    Sign out
+                </Button>
+
+            </form>
         </div>
     )
 }

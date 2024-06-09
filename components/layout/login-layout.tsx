@@ -1,17 +1,18 @@
-// pages/LoginPage.tsx
+'use client'
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState } from "react"
 import { cn } from "@/lib/utils";
-import { z } from "zod";
 import { ResetPasswordForm } from "../ui/reset-password-form";
-import { LoginSchema, ResetPasswordSchema } from "@/lib/formSchema";
 import { LoginForm } from "../ui/login-form";
 import { TextAction } from "../ui/text-action";
 import { TogglePanel } from "../ui/toggle-panel-login";
 
 export const LoginLayout = () => {
-    const [isToggle, setIsToggle] = useState(false);
+    const [isToggle, setIsToggle] = useState(false)
+
+    const onToggle = () =>{
+        setIsToggle(!isToggle)
+    }
 
     return (
         <div
@@ -73,7 +74,7 @@ export const LoginLayout = () => {
                         <ResetPasswordForm/>
                         <TextAction 
                             label="Kembali untuk login" 
-                            onClick={() => setIsToggle(!isToggle)}
+                            onClick={onToggle}
                         />
                     </div>
                 </div>

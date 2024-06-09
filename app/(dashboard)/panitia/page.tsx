@@ -1,8 +1,8 @@
 const PanitiaPage = () =>{
     return(
-        <div>
+        <main>
             PANITA PAGE
-        </div>
+        </main>
     )
 }
 

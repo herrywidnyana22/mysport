@@ -8,6 +8,11 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
+enum Role {
+  PANITIA
+  ADMIN
+}
+
 model Session {
   id           String   @id @default(uuid())
   sessionToken String   @unique
@@ -16,27 +21,36 @@ model Session {
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-enum Role {
-  PANITIA
-  ADMIN
+model VerificationToken {
+  id       String   @id @default(uuid())
+  username String   @unique
+  email    String
+  token    String   @unique
+  expires  DateTime
+
+  @@unique([email, token])
 }
 
 model User {
-  id        String    @id @default(uuid())
-  name      String
-  username  String    @unique
-  password  String
-  image     String?
-  role      Role      @default(PANITIA)
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  sessions  Session[]
-  pos       Pos[]
+  id            String    @id @default(uuid())
+  name          String
+  email         String    @unique
+  emailVerified DateTime?
+  username      String    @unique
+  password      String
+  image         String?
+  role          Role      @default(PANITIA)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  sessions      Session[]
+  pos           Pos[]
+
+  @@unique([email, username])
 }
 
 model Category {
   id           String    @id @default(uuid())
-  categoryName String
+  categoryName String    @unique
   startAt      DateTime?
   isEnded      Boolean   @default(false)
   createdAt    DateTime  @default(now())

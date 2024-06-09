@@ -3,7 +3,7 @@
  * @type {string[]}
  */
 export const publicRoutes = [
-    "/"
+    "/",
 ]
 
 /**
@@ -12,6 +12,7 @@ export const publicRoutes = [
  */
 export const authRoutes=[
     "/auth/login",
+    "/auth/error"
 ]
 
 /**
@@ -22,8 +23,14 @@ export const authRoutes=[
 export const apiAuthPrefix = "/api/auth"
 
 /**
- * Default redirect path after logging in
+ * Default redirect path after logging in for role admin
  * @type {string}
  */
 export const DEFAULT_ADMIN_REDIRECT = "/admin"
+
+
+/**
+ * Default redirect path after logging in for role panitia
+ * @type {string}
+ */
 export const DEFAULT_PANITIA_REDIRECT = "/panitia"

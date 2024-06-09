@@ -9,6 +9,8 @@ import { Loader2 } from "lucide-react";
 import { LoginSchema } from "@/lib/formSchema";
 import { z } from "zod";
 import { useState } from "react";
+import { login } from "@/services/auth/login";
+import { toast } from "sonner";
 
 type FormDataLogin = z.infer<typeof LoginSchema>;
 
@@ -32,8 +34,20 @@ export const LoginForm = () => {
         formState: { errors },
     } = initForm
 
-    const onSubmit = () =>{
+     const onSubmit = async(values: z.infer<typeof LoginSchema>) =>{
+        setIsPending(true)
+        try {
+            const loginAction = await login(values)
+            if(loginAction?.error) {
+                return toast.error(loginAction.error)
+            }
 
+            return toast.success("Login sukses...")
+        } catch (error) {
+            toast.error(error as string)
+        } finally{
+            setIsPending(false)
+        }
     }
 
     return (

@@ -8,16 +8,16 @@ import { RegisterpSchema } from "@/lib/formSchema";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
+import { Loader2, UserCheck2Icon } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { useHookMutation } from "@/hooks/useHookMutation";
 import { toast } from "sonner";
+import { getAllUser } from "@/services/users/get";
+import { addUser } from "@/services/users/add";
 
 type FormDataRegister = z.infer<typeof RegisterpSchema>
 
 const AddUser = () =>{
-    const [isPending, setIsPending] = useState(false)
-
+    
     const initForm = useForm<FormDataRegister>({
         resolver: zodResolver(RegisterpSchema),
         mode:"onChange",
@@ -32,24 +32,32 @@ const AddUser = () =>{
     const {
         control,
         reset,
-        formState: {errors},
+        formState: {errors, isLoading},
         handleSubmit
     } = initForm
 
-
-
     const onSubmit = async(formData: FormDataRegister) =>{
-        
+        try {
+            const createUser = await addUser(formData)
+
+            if (createUser.status === "success") {
+                toast.success(createUser.msg)
+                reset()
+            }
+            if (createUser.status === "error") {
+                toast.success(createUser.msg)
+                reset()
+            }
+
+        } catch (error) {
+            toast.error(error as string)
+        } 
     }
 
-    return(
-        <div>
-            <div>
-                {
-                    
-                }
 
-            </div>
+    return(
+        <div>  
+            
             <div className="w-80 m-auto">
                 <Form {...initForm}>
                     <form
@@ -64,7 +72,7 @@ const AddUser = () =>{
                             <FormField
                                 control={control}
                                 name="name"
-                                disabled={isPending}
+                                disabled={isLoading}
                                 render={({field}) => (
                                     <FormItem>
                                         <FormLabel>
@@ -85,7 +93,7 @@ const AddUser = () =>{
                             <FormField
                                 control={control}
                                 name="username"
-                                disabled={isPending}
+                                disabled={isLoading}
                                 render={({field}) => (
                                     <FormItem>
                                         <FormLabel>
@@ -106,7 +114,7 @@ const AddUser = () =>{
                             <FormField
                                 control={control}
                                 name="email"
-                                disabled={isPending}
+                                disabled={isLoading}
                                 render={({field}) => (
                                     <FormItem>
                                         <FormLabel>
@@ -127,7 +135,7 @@ const AddUser = () =>{
                             <FormField
                                 control={control}
                                 name="password"
-                                disabled={isPending}
+                                disabled={isLoading}
                                 render={({field}) => (
                                     <FormItem>
                                         <FormLabel>
@@ -149,10 +157,10 @@ const AddUser = () =>{
                         <Button
                             type="submit"
                             className="w-full"
-                            disabled={isPending || Object.keys(errors).length > 0}
+                            disabled={isLoading || Object.keys(errors).length > 0}
                         >
                             {
-                                isPending 
+                                isLoading 
                                 ? <Loader2 className="w-5 h-5 animate-spin"/>
                                 : "Create an account"
                             }
