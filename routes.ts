@@ -7,12 +7,17 @@ export const publicRoutes = [
 ]
 
 /**
- * these route will redirect logged user to /settings
+ * these route will redirect logged user to loggedRoute
  * @type {string[]}
  */
 export const authRoutes=[
     "/auth/login",
     "/auth/error"
+]
+
+export const loggedRoute=[
+    "/admin",
+    "/panitia"
 ]
 
 /**

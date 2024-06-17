@@ -72,7 +72,6 @@ export const addUser = async(formData: z.infer<typeof RegisterpSchema>) =>{
         })
         
     } catch (error) {
-        console.log({error})
         return respon({
             code: 500,
             status:"error",

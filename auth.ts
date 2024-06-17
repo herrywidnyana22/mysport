@@ -4,6 +4,7 @@ import authConfig from "./auth.config"
 import { PrismaAdapter } from "@auth/prisma-adapter"
 import { db } from "./lib/db"
 import {  getUserByID } from "./services/users/get"
+import { Role } from "@prisma/client"
  
  
 export const { 
@@ -27,8 +28,10 @@ export const {
       }
 
       if(token.role && session.user){
-        session.user.role = token.role
+        session.user.role = token.role as Role
       }
+
+      console.log({userSession: session})
 
       return session
     },
@@ -40,7 +43,6 @@ export const {
       if(!existUser) return token
 
       token.role = existUser.data.role
-      console.log({token})
       return token
     },
   },

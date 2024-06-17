@@ -7,6 +7,7 @@ import { DEFAULT_ADMIN_REDIRECT, DEFAULT_PANITIA_REDIRECT } from "@/routes"
 import { signIn } from "@/auth"
 import { getUserByUsernameLogin } from "./get"
 import { generateToken } from "@/lib/tokens"
+import { Role } from "@prisma/client"
 
 export const login = async(values: z.infer<typeof LoginSchema>) => {
     const validateFields = LoginSchema.safeParse(values);
@@ -35,12 +36,20 @@ export const login = async(values: z.infer<typeof LoginSchema>) => {
     //     }
     // }
 
+    let redirectTo
+
+    if(existUser?.role === Role.ADMIN) {
+        redirectTo = DEFAULT_ADMIN_REDIRECT
+    } else if(existUser?.role === Role.PANITIA) {
+        redirectTo = DEFAULT_PANITIA_REDIRECT
+    }
+
     try {
         await signIn("credentials",
         {
             username,
             password,
-            redirectTo: DEFAULT_ADMIN_REDIRECT,
+            redirectTo,
         })
     } catch (error) {
         if (error instanceof AuthError){

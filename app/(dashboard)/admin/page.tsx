@@ -1,25 +1,18 @@
 import { auth, signOut } from "@/auth";
+import { DataTableLayout } from "@/components/layout/datatable-layout";
+import { InputGroupLayout } from "@/components/layout/input-group";
+import { LogActivityLayout } from "@/components/layout/log-layout";
 import { Button } from "@/components/ui/button";
+import { currentRole } from "@/lib/auth";
 
 const AdminPage = async() =>{
+    const userRole = await currentRole()
 
-    const userSession = await auth()
-    const onLogout = async() =>{
-        'use server'
-        await signOut({
-            redirectTo: "/auth/login"
-        })
-    }
     return(
-        <div>
-            {JSON.stringify({userSession})}
-            <form action={onLogout}>
-                <Button type="submit">
-                    Sign out
-                </Button>
-
-            </form>
-        </div>
+        <>
+        {JSON.stringify({userRole})}
+        <DataTableLayout/>
+        </>
     )
 }
 
