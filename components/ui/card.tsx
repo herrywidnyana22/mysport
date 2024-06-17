@@ -8,7 +8,7 @@ type Props = {
     
 export const Card = ({}: Props) => {
     return ( 
-        <CardWrapper>
+        <CardWrapper className="mb-4">
             <div
                 className="
                     flex

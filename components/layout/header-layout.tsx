@@ -1,10 +1,11 @@
+
 import { Avatar } from "@/components/ui/avatar";
 import { AvatarMenuLayout } from "./avatar-menu-layout";
 
-type Props = {
-    
+type HeaderProps = {
+    title: string
 }
-export const HeaderLayout = ({}: Props) => {
+export const HeaderLayout = ({title}: HeaderProps) => {
     return ( 
         <div
             className="
@@ -21,7 +22,7 @@ export const HeaderLayout = ({}: Props) => {
                     font-bold
                 "
             >
-                PAGE TITLE
+                {title}
             </div>
             <AvatarMenuLayout
                 side="bottom"

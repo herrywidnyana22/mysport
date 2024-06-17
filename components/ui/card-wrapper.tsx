@@ -14,7 +14,7 @@ export const CardWrapper = ({children, className}: CardWrapperProps) => {
                 border 
                 bg-card 
                 text-card-foreground 
-                shadow-sm`,
+                shadow-md`,
                 className
             )}
         >
