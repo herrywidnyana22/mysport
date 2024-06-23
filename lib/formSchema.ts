@@ -74,13 +74,7 @@ export const LombaSchema = z
         isStartSet: z
             .boolean(),
         startAt: z
-        .union([z.string(), z.date()])
-        .refine(value => {
-            if (typeof value === 'string' && isNaN(Date.parse(value))) {
-                return false;
-            }
-            return true;
-        }, { message: VALIDATE_MESSAGES.DATE_FORMAT }),
+            .date({ message: VALIDATE_MESSAGES.DATE_FORMAT }),
         isAgeSet: z
             .boolean(),
         minAge: z
@@ -117,11 +111,11 @@ export const GenerateDynamicSchemaByPos = (jumlahPos: number) => {
         pos: posArraySchema,
         isFinish: isFinishEnumValues
     })
-    .refine((data) => {
+    .refine(data => {
         if (data.isStartSet) {
             return data.startAt !== undefined;
         }
-        return true
+        return true;
     }, {
         message: VALIDATE_MESSAGES.START_DATE_REQUIRED,
         path: ['startAt'],
