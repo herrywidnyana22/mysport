@@ -1,5 +1,6 @@
 import { db } from "@/lib/db"
-import { respon } from "@/types/api-respon"
+import { ApiError, respon } from "@/types/api-respon"
+import { Role } from "@prisma/client"
 
 export const getUserByID = async(id: string)=>{
     try {
@@ -26,9 +27,9 @@ export const getUserByID = async(id: string)=>{
         })
 
     } catch (error) {
-        return respon({
+        respon({
             code: 500,
-            status:"error",
+            status: "error",
             msg: "An error occurred while retrieving users",
             data: null
         })
@@ -60,9 +61,9 @@ export const getUserByEmail = async(email: string) =>{
         })
 
     } catch (error) {
-        return respon({
+        respon({
             code: 500,
-            status:"error",
+            status: "error",
             msg: "An error occurred while retrieving users",
             data: null
         })
@@ -125,9 +126,33 @@ export const getAllUser = async() => {
             msg: "Users retrieved successfully",
         })
     } catch (error) {
-        return respon({
+        respon({
             code: 500,
-            status:"error",
+            status: "error",
+            msg: "An error occurred while retrieving users",
+            data: null
+        })
+    }
+}
+
+export const getPanitiaCount = async() =>{
+    try {
+        const userCount = await db.user.count({
+            where: {
+                role: Role.PANITIA
+            }
+        })
+
+        return respon({
+            code: 200,
+            status: "success",
+            msg: "Total panita berhasil di request",
+            data: userCount
+        })
+    } catch (error) {
+        throw new ApiError({
+            code: 500,
+            status: "error",
             msg: "An error occurred while retrieving users",
             data: null
         })

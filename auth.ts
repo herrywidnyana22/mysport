@@ -27,11 +27,15 @@ export const {
         session.user.id = token.sub
       }
 
+      if(token.username && session.user){
+        session.user.username = token.username
+      }
+
       if(token.role && session.user){
         session.user.role = token.role as Role
       }
 
-      console.log({userSession: session})
+      // console.log({userSession: session})
 
       return session
     },
@@ -42,6 +46,7 @@ export const {
       const existUser = await getUserByID(token.sub)
       if(!existUser) return token
 
+      token.username = existUser.data.username
       token.role = existUser.data.role
       return token
     },

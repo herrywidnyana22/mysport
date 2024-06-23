@@ -29,45 +29,30 @@ export default auth((req) =>{
 
   const currentUserRole = req.auth?.user
 
+  // console.log({currentUserRole})
+
   if(isApiAuthRoute) return
 
   if (isAuthRoute){
-    if(!isLoggedIn) return
-
-    if(userRole === Role.ADMIN){
-      return Response.redirect(new URL(DEFAULT_ADMIN_REDIRECT, nextUrl))
-    }
-
-    if(userRole === Role.PANITIA){
-      return Response.redirect(new URL(DEFAULT_PANITIA_REDIRECT, nextUrl))
+    if(isLoggedIn){
+      if(userRole === Role.ADMIN){
+        return Response.redirect(new URL(DEFAULT_ADMIN_REDIRECT, nextUrl))
+      }
+  
+      if(userRole === Role.PANITIA){
+        return Response.redirect(new URL(DEFAULT_PANITIA_REDIRECT, nextUrl))
+      }
     }
     
-  } 
-  // else if(adminRoute){
-  //   if(!isLoggedIn) {
-  //       return Response.redirect(new URL('/auth/login', nextUrl))
-  //   }
+    return
+  }
 
-  //   if(userRole === Role.PANITIA){
-  //     return Response.redirect(new URL(DEFAULT_PANITIA_REDIRECT, nextUrl))
-  //   }
-  // } else if(panitiaRoute){
-  //   if(!isLoggedIn) {
-  //       return Response.redirect(new URL('/auth/login', nextUrl))
-  //   }
-
-  //   if(userRole === Role.ADMIN){
-  //     return Response.redirect(new URL(DEFAULT_ADMIN_REDIRECT, nextUrl))
-  //   }
-  // }
-
-  // console.log({currentUserRole: currentUserRole ? currentUserRole : "null"})
-  
+  if(!isLoggedIn && !isPublicRoute){
+    return Response.redirect(new URL("/auth/login", nextUrl))
+  }
 
   return 
 }) 
- 
-// Optionally, don't invoke Middleware on some paths
 export const config = {
   matcher: ['/((?!.*\\..*|_next).*)', '/', '/(api|trpc)(.*)'],
 }

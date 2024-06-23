@@ -6,8 +6,8 @@ interface InputTextProps {
     name?: string;
     value?: any;
     disabled?: boolean;
-    placeholder?: string;
-    type?: "text" | "password" | "number" | "hidden" | "radio" | "checkbox" | "email";
+    placeholder: string;
+    type?: "text" | "password" | "number" | "hidden" | "radio" | "checkbox" | "email" | "date"
     label?: string;
     readOnly?: boolean;
     className?: string;
@@ -55,6 +55,7 @@ export const InputText = forwardRef<HTMLInputElement, InputTextProps>(({
                     onChange={onChange}
                     className={cn(`
                         appearance-none
+                        no-spinner
                         w-full
                         peer
                         p-2
@@ -66,40 +67,40 @@ export const InputText = forwardRef<HTMLInputElement, InputTextProps>(({
                         border-2
                         outline-none
                         transition
+                        placeholder-opacity-0
                         bg-white
                         disabled:opacity-70
                         disabled:cursor-not-allowed
-                        focus:text-sm`,
+                        focus:placeholder-opacity-100
+                        focus:text-sm
+                        focus:border-indigo-500`,
                         className,
                         disabled && "opacity-80 cursor-not-allowed",
-                        readOnly 
-                        ? "ring-0 shadow-none border-transparent bg-transparent"
-                        : "shadow-sm",
+                        readOnly && "ring-0 shadow-none border-transparent bg-transparent",
                         errorMsg && "border-rose-400  ring-rose-300"
                         
                     )}
                 />
-                {/* {   !readOnly &&( */}
                     <label className={cn(`
                         absolute
-                        top-2.5
+                        top-3
                         left-2.5
                         px-1
-                        text-sm
+                        text-xs
                         origin-[0]
-                        z-10
-                        duration-150
-                        transform`,
-                        !readOnly 
-                        && `
+                        duration-150`,
+                        !readOnly && `
                             -translate-y-5
+                            w-auto
                             bg-white
                             pointer-events-none
-                            peer-placeholder-shown:scale-100
+                            peer-placeholder-shown:scale-0
                             peer-placeholder-shown:translate-y-0
-                            peer-focus:scale-75
-                            peer-focus:-translate-y-5
-                        `, errorMsg && "text-rose-400",
+                            peer-focus:font-semibold
+                            peer-focus:scale-90
+                            peer-focus:text-indigo-500
+                            peer-focus:-translate-y-5`,
+                            errorMsg && "text-rose-400",
                         className  
                     )}>
                         { label }

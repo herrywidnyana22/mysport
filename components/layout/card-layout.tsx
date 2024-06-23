@@ -10,7 +10,6 @@ export const CardLayout = () =>{
                 justify-between 
             "
         >
-
             <Card/>
             <Card/>
             <Card/>

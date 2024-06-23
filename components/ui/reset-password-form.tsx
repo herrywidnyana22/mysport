@@ -48,7 +48,8 @@ export const ResetPasswordForm = () => {
                                 <FormControl>
                                     <InputText {...field} 
                                         type="email" 
-                                        label={"Email"} 
+                                        label={"Email"}
+                                        placeholder={"Masukkan email yg digunakan"}
                                         disabled={isPending} 
                                         errorMsg={errors.email?.message} 
                                     />

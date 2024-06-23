@@ -2,7 +2,7 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Form, FormField, FormItem, FormControl } from "@/components/ui/form";
+import { Form, FormField, FormItem, FormControl, FormMessage } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { InputText } from "@/components/ui/input-text";
 import { Loader2 } from "lucide-react";
@@ -11,6 +11,7 @@ import { z } from "zod";
 import { useState } from "react";
 import { login } from "@/services/auth/login";
 import { toast } from "sonner";
+import { ButtonAction } from "./button-action";
 
 type FormDataLogin = z.infer<typeof LoginSchema>;
 
@@ -41,7 +42,7 @@ export const LoginForm = () => {
             if(loginAction?.error) {
                 return toast.error(loginAction.error)
             }
-
+            reset()
             return toast.success("Login sukses...")
         } catch (error) {
             toast.error(error as string)
@@ -52,16 +53,46 @@ export const LoginForm = () => {
 
     return (
         <Form {...initForm }>
-            <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col items-center justify-center px-10 ">
-                <h1 className="font-bold text-2xl">Sign in</h1>
-                <div className="space-y-4 mt-8 mb-2 w-full">
+            <form 
+                onSubmit={handleSubmit(onSubmit)} 
+                className="
+                    flex 
+                    flex-col 
+                    items-center 
+                    justify-center 
+                    px-10 
+                "
+            >
+                <h1 
+                    className="
+                        font-bold 
+                        text-2xl
+                    "
+                >
+                    Sign in
+                </h1>
+                <div 
+                    className="
+                        w-full
+                        space-y-4 
+                        mt-8 
+                        mb-2 
+                    "
+                >
                     <FormField
                         control={control}
                         name="username"
                         render={({ field }) => (
                             <FormItem>
                                 <FormControl>
-                                    <InputText {...field} type="text" label={"Username"} disabled={isPending} errorMsg={errors.username?.message} />
+                                    <InputText 
+                                        {...field} 
+                                        type="text"
+                                        placeholder="Masukkan username"
+                                        label={"Username"} 
+                                        disabled={isPending} 
+                                        errorMsg={errors.username?.message} 
+                                    />
                                 </FormControl>
                             </FormItem>
                         )}
@@ -72,15 +103,26 @@ export const LoginForm = () => {
                         render={({ field }) => (
                             <FormItem>
                                 <FormControl>
-                                    <InputText {...field} type="password" label="Password" disabled={isPending} errorMsg={errors.password?.message} />
+                                    <InputText 
+                                    {...field} 
+                                    type="password" 
+                                    label="Password"
+                                    placeholder="Masukkan password" 
+                                    disabled={isPending} 
+                                    errorMsg={errors.password?.message} 
+                                />
                                 </FormControl>
                             </FormItem>
                         )}
                     />
                 </div>
-                <Button type="submit" disabled={isPending || Object.keys(errors).length > 0} className="w-full mt-3 px-12 py-3 uppercase font-semibold border border-solid border-transparent text-sm text-white">
-                    {isPending ? <Loader2 className="w-5 h-5 animate-spin" /> : "Login"}
-                </Button>
+                <ButtonAction 
+                    type="submit" 
+                    variant="text"
+                    disabled={isPending || Object.keys(errors).length > 0}
+                    isPending={isPending}
+                    label={"Login"} 
+                />
             </form>
         </Form>
     )

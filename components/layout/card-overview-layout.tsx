@@ -1,22 +1,29 @@
+'use client'
+
 import { cn } from "@/lib/utils";
-import { LucideIcon, Plus } from "lucide-react";
+import { Eye, LucideIcon, Plus } from "lucide-react";
 import { OverlayEffect } from "../ui/overlay-effect";
+import { Hint } from "../ui/hint";
+import Link from "next/link";
 
 type CardOverViewProps = {
     label: string | number
     subLabel: string | number
     icon: LucideIcon
-    newButtonAction?: () => void
-    color?: "green" | "yellow" | "purple" | "red" | "blue" | "white"
+    viewUrl?: string
+    newAction?: React.ReactNode
+    color?: "green" | "yellow" | "purple" | "red" | "blue" | "white" | "cyan" | "orange" | "pink"
 }
 
 export const CardOverViewLayout = ({
     icon: Icon,
     label,
     subLabel,
-    newButtonAction,
+    viewUrl,
+    newAction,
     color = "white"
 }: CardOverViewProps) => {
+
     return ( 
         <div 
             className={cn(`
@@ -57,30 +64,44 @@ export const CardOverViewLayout = ({
                         transition-opacity
                     "
                 />
-                <button
-                    type="button"
-                    className={cn(`
-                        absolute
-                        right-4
-                        p-1
-                        z-20
-                        opacity-0
-                        group-hover:opacity-100
-                        transition-opacity
-                        outline-none
-                        rounded-full
-                        bg-zinc-300`
-                    )}
-                >
-                    <Plus
+                
+                {
+                    viewUrl && (
+                    <Link
+                        href={viewUrl}
                         className="
-                            opacity-75
-                            hover:opacity-100
+                            absolute left-4 z-20
+                            opacity-0
+                            group-hover:opacity-100
                             transition-opacity
-                            text-white
                         "
-                    />
-                </button>
+                    >
+                        <Hint 
+                            label="View data" 
+                            side="top"
+                        >
+                            <button
+                                type="button"
+                                className={cn(`
+                                    p-1
+                                    outline-none
+                                    rounded-full
+                                    bg-zinc-300`
+                                )}
+                            >
+                                <Eye
+                                    className="
+                                        opacity-75
+                                        hover:opacity-100
+                                        transition-opacity
+                                        text-white
+                                    "
+                                />
+                            </button>
+                        </Hint>
+                    </Link>
+                )}
+                { newAction && newAction }
                 <OverlayEffect/>
             </div>
         </div>

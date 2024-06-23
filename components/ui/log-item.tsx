@@ -1,7 +1,7 @@
 import { CardWrapper } from "@/components/ui/card-wrapper";
 import { Badge } from "@/components/ui/badge";
 import { Hourglass } from "lucide-react";
-import { TooltipLayout } from "./tooltip-layout";
+import { Hint } from "./hint";
 
 type Props = {
  
@@ -41,7 +41,7 @@ export const LogActifityItem = ({}: Props) => {
                         <Badge variant="outline" className="text-[10px] text-zinc-700">Pos 3</Badge>
                     </div>
                     <div>
-                        <TooltipLayout
+                        <Hint
                             label="On Running"
                             side="top"
                             align="center"
@@ -49,7 +49,7 @@ export const LogActifityItem = ({}: Props) => {
                             <Badge variant="process" className="p-1">
                                 <Hourglass className="w-3 h-3"/>
                             </Badge>
-                        </TooltipLayout>
+                        </Hint>
                     </div>
                 </div>
             </div>

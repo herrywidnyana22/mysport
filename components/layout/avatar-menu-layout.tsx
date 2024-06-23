@@ -1,5 +1,5 @@
 'use client'
-import { Link2, LogOut, Pencil, Trash2 } from "lucide-react"
+import { Award, Link2, LogOut, Pencil, Trash2, User } from "lucide-react"
 
 import { DropdownMenuContentProps } from "@radix-ui/react-dropdown-menu"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
@@ -9,6 +9,8 @@ import { onLogout } from "@/services/auth/logout"
 import { toast } from "sonner"
 import { redirect } from "next/navigation"
 import { useCurrentUser } from "@/hooks/use-current-user"
+import { useCurrentRole } from "@/hooks/use-current-role"
+import { Role } from "@prisma/client"
 
 
 interface AvatarMenuProps{
@@ -27,6 +29,7 @@ export const AvatarMenuLayout = ({
     const [isLoading, setIsLoading] = useState(false)
 
     const user = useCurrentUser()
+    const userRole = useCurrentRole()
 
     const handleLogout = async() =>{
         try {
@@ -38,8 +41,6 @@ export const AvatarMenuLayout = ({
             setIsLoading(false)
         }
     }
-
-
     return (
         
         <DropdownMenu>
@@ -58,46 +59,10 @@ export const AvatarMenuLayout = ({
                 "
             >
                 <div className="p-2">
-                    <p className="text-sm font-semibold">{user?.name}</p>
+                    <p className="text-sm font-semibold">{user?.username}</p>
                     <p className="text-[10px] text-muted-foreground">{user?.email}</p>
+                    <p className="text-sm text-muted-foreground">{`(${userRole})`}</p>
                 </div>
-                <Separator/>
-                <DropdownMenuItem
-                    className="
-                        flex
-                        items-center
-                        justify-between
-                        p-2
-                        cursor-pointer
-                        text-xs
-                    "
-                >
-                    Add Category
-                    <Link2
-                        className="
-                            w-4
-                            h-4
-                        "
-                    />
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                    className="
-                        flex
-                        items-center
-                        justify-between
-                        p-2
-                        cursor-pointer
-                        text-xs
-                    "
-                >
-                    Add Panitia
-                    <Pencil
-                        className="
-                            w-4
-                            h-4
-                        "
-                    />
-                </DropdownMenuItem>
                 <Separator/>
                 <DropdownMenuItem
                     onClick={handleLogout}

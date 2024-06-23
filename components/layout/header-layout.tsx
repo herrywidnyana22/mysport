@@ -1,11 +1,15 @@
+'use client'
 
 import { Avatar } from "@/components/ui/avatar";
 import { AvatarMenuLayout } from "./avatar-menu-layout";
+import { useCurrentRole } from "@/hooks/use-current-role";
+import { CardTitle } from "../ui/card-title";
 
 type HeaderProps = {
     title: string
 }
 export const HeaderLayout = ({title}: HeaderProps) => {
+    const userRole = useCurrentRole()
     return ( 
         <div
             className="
@@ -27,7 +31,16 @@ export const HeaderLayout = ({title}: HeaderProps) => {
             <AvatarMenuLayout
                 side="bottom"
             >
-                <Avatar/>
+                <div 
+                    className="
+                        flex 
+                        gap-1 
+                        items-center
+                    "
+                >
+                    <CardTitle label={userRole}/>
+                    <Avatar/>
+                </div>
             </AvatarMenuLayout>
         </div>
     );

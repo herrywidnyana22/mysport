@@ -6,7 +6,7 @@ import {
 } from "@/components/ui/tooltip"
 
 
-export interface TooltipProps{
+export interface HintProps{
     label: string
     children: React.ReactNode
     side?: "top" | "bottom" | "left" | "right"
@@ -15,18 +15,18 @@ export interface TooltipProps{
     alignOffset?: number
 }
 
-export const TooltipLayout = ({
+export const Hint = ({
     label,
     children,
     side,
     align,
     sideOffset,
     alignOffset
-}: TooltipProps) => {
+}: HintProps) => {
     return(
         <TooltipProvider>
             <Tooltip delayDuration={100}>
-                <TooltipTrigger>
+                <TooltipTrigger asChild>
                     {children}
                 </TooltipTrigger>
                 <TooltipContent

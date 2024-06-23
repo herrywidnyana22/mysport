@@ -6,14 +6,15 @@ import { z } from "zod"
 import { getUserByEmail, getUserByUsername } from "./get"
 import { db } from "@/lib/db"
 import { generateToken } from "@/lib/tokens"
-import { respon } from "@/types/api-respon"
+import { ApiError, respon } from "@/types/api-respon"
+import { uuidv7 } from "uuidv7"
 
 
 export const addUser = async(formData: z.infer<typeof RegisterpSchema>) =>{
     const validateValues = RegisterpSchema.safeParse(formData)
     try {
         if(!validateValues.success){
-            return respon({
+            throw new ApiError({
                 code: 400,
                 status:"error",
                 data: null,
@@ -34,7 +35,7 @@ export const addUser = async(formData: z.infer<typeof RegisterpSchema>) =>{
         const isUsernameExist = await getUserByUsername(username)
 
         if(isEmailExist.data){
-            return respon({
+            throw new ApiError({
                 code: 409,
                 status: "error",
                 msg: "Email sudah pernah digunakan..!",
@@ -43,7 +44,7 @@ export const addUser = async(formData: z.infer<typeof RegisterpSchema>) =>{
         }
 
         if(isUsernameExist.data){
-            return respon({
+            throw new ApiError({
                 code: 409,
                 status: "error",
                 msg: "Username sudah pernah digunakan..!",
@@ -53,6 +54,7 @@ export const addUser = async(formData: z.infer<typeof RegisterpSchema>) =>{
 
         const newUser = await db.user.create({
             data:{
+                id: uuidv7(),
                 name,
                 username,
                 email,
@@ -72,7 +74,7 @@ export const addUser = async(formData: z.infer<typeof RegisterpSchema>) =>{
         })
         
     } catch (error) {
-        return respon({
+        respon({
             code: 500,
             status:"error",
             msg:"An error occurred while creating new user",

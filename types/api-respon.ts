@@ -17,4 +17,17 @@ export const respon = ({
     status,
     msg,
     data,
-});
+})
+
+export class ApiError extends Error {
+    code: number;
+    status: 'success' | 'error';
+    data: any;
+
+    constructor({ code, status, msg, data }: ApiResponProps) {
+        super(msg);
+        this.code = code;
+        this.status = status;
+        this.data = data;
+    }
+}

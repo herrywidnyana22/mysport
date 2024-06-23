@@ -29,6 +29,7 @@ export const InputGroupLayout = ({}: Props) => {
                     Array.from({length: DEFAULT_NUM_INPUT}).map((_, i) => (
                         <InputText
                             key={i}
+                            placeholder="Masukan no peserta"
                             label={`No Peserta ${i+1}`}
                         />
                     ))

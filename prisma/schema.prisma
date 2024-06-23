@@ -13,16 +13,14 @@ enum Role {
   ADMIN
 }
 
-model Session {
-  id           String   @id @default(uuid())
-  sessionToken String   @unique
-  expires      DateTime
-  userId       String
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+enum Genre {
+  Pria
+  Wanita
+  Gabungan
 }
 
 model VerificationToken {
-  id       String   @id @default(uuid())
+  id       String   @id @default(dbgenerated()) @db.Uuid
   username String   @unique
   email    String
   token    String   @unique
@@ -32,7 +30,7 @@ model VerificationToken {
 }
 
 model User {
-  id            String    @id @default(uuid())
+  id            String    @id @default(dbgenerated()) @db.Uuid
   name          String
   email         String    @unique
   emailVerified DateTime?
@@ -42,39 +40,55 @@ model User {
   role          Role      @default(PANITIA)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
-  sessions      Session[]
   pos           Pos[]
 
   @@unique([email, username])
 }
 
 model Category {
-  id           String    @id @default(uuid())
-  categoryName String    @unique
-  startAt      DateTime?
-  isEnded      Boolean   @default(false)
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-  peserta      Peserta[]
-  pos          Pos[]
+  id           String   @id @default(dbgenerated()) @db.Uuid
+  categoryName String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  Lomba        Lomba[]
+}
+
+model Lomba {
+  id         String    @id @default(dbgenerated()) @db.Uuid
+  lombaName  String    @unique
+  genre      Genre     @default(Gabungan)
+  isRegister Boolean   @default(false)
+  isDateSet  Boolean   @default(true)
+  startAt    DateTime?
+  startTime  String?
+  isAgeSet   Boolean   @default(false)
+  minAge     Int?
+  maxAge     Int?
+  isEnded    Boolean   @default(false)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  peserta    Peserta[]
+  pos        Pos[]
+  categoryID String?   @db.Uuid
+  category   Category? @relation(fields: [categoryID], references: [id], onDelete: SetNull)
 }
 
 model Pos {
-  id          String       @id @default(uuid())
+  id          String       @id @default(dbgenerated()) @db.Uuid
   posName     String
   isPosFinish Boolean?
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
-  categoryID  String
-  category    Category     @relation(fields: [categoryID], references: [id], onDelete: Cascade)
-  userID      String?
-  user        User?        @relation(fields: [userID], references: [id], onUpdate: NoAction, onDelete: SetNull)
+  lombaID     String       @db.Uuid
+  lomba       Lomba        @relation(fields: [lombaID], references: [id], onDelete: Cascade)
+  userID      String?      @db.Uuid
+  user        User?        @relation(fields: [userID], references: [id], onDelete: SetNull)
   peserta     Peserta[]    @relation("PesertaPos")
   PesertaPos  PesertaPos[]
 }
 
 model Peserta {
-  id         String       @id @default(uuid())
+  id         String       @id @default(dbgenerated()) @db.Uuid
   name       String?
   birthday   DateTime?
   alamat     String?
@@ -83,15 +97,15 @@ model Peserta {
   waktu      DateTime?
   createdAt  DateTime     @default(now())
   updatedAt  DateTime     @updatedAt
-  categoryID String?
-  category   Category?    @relation(fields: [categoryID], references: [id], onDelete: Cascade)
+  lombaID    String       @db.Uuid
+  lomba      Lomba        @relation(fields: [lombaID], references: [id], onDelete: Cascade)
   pos        Pos[]        @relation("PesertaPos")
   PesertaPos PesertaPos[]
 }
 
 model PesertaPos {
-  pesertaId String
-  posId     String
+  pesertaId String   @db.Uuid
+  posId     String   @db.Uuid
   createdAt DateTime @default(now())
 
   peserta Peserta @relation(fields: [pesertaId], references: [id], onDelete: Cascade)
