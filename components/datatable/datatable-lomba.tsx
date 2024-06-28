@@ -154,15 +154,13 @@ export const TableLomba = ({data}: DatatableLombaProps) => {
                                         : "Jadwal random"
                                     }
                                 </TableCell>
-                                <TableCell className="flex flex-col gap-1">
-                                    <div>
+                                <TableCell className="space-y-2">
+                                    <div className="flex justify-between">
                                         { 
                                             item.isRegister
                                             ? <Badge variant="Finished">Register</Badge> 
                                             : <Badge variant="primary">Non Register</Badge> 
                                         }
-                                    </div>
-                                    <div>
                                         {
                                             item.genre === 'Gabungan' ? (
                                                 <Badge variant="default">{item.genre}</Badge>
@@ -177,7 +175,7 @@ export const TableLomba = ({data}: DatatableLombaProps) => {
                                         { 
                                             item.isAgeSet 
                                             ? `${item.minAge} - ${item.maxAge} Tahun`
-                                            : <Badge variant="process">Semua umur</Badge>
+                                            : "Semua umur"
                                         }
                                     </div>
                                     
