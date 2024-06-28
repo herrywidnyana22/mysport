@@ -19,16 +19,21 @@ import { OptionToggle } from "./option-toggle";
 import { SwitchForm } from "./switch-form";
 import { CardWrapper } from "./card-wrapper";
 import { Hint } from "./hint";
+import { addLomba } from "@/services/lomba/add";
 
 
-type BaseFormData = z.infer<typeof LombaSchema>;
-type FormDataLomba = BaseFormData & {
-    pos: { value: string, name: string }[],
-    isFinish: string
-};
+// type BaseFormData = z.infer<typeof LombaSchema>;
+// type FormDataLomba = BaseFormData & {
+//     pos: { value: string, name: string }[],
+//     isFinish: string
+// };
+
+export type FormDataLomba = z.infer<ReturnType<typeof GenerateDynamicSchemaByPos>>
+
+const DEFAULT_JUMLAH_POS = 1
 
 export const LombaForm = () => {
-    const [jumlahPos, setJumlahPos] = useState(1)
+    const [jumlahPos, setJumlahPos] = useState(DEFAULT_JUMLAH_POS)
 
 
     const formSchema = GenerateDynamicSchemaByPos(jumlahPos)  
@@ -77,31 +82,27 @@ export const LombaForm = () => {
 
     // )
 
+    const setDefault = () =>{
+        reset()
+        setJumlahPos(DEFAULT_JUMLAH_POS)
+    }
+
     const onSubmit = async(data: FormDataLomba) =>{
-        // setIsPending(true)
+        setIsPending(true)
         console.log({data})
 
-        // const dynamicSchema = GenerateDynamicSchemaByPos(data.jumlahPos);
-
-        // dynamicSchema.parseAsync(data)
-        // .then((validatedData) => {
-        //     console.log('Validation passed:', validatedData);
-        // })
-        // .catch((err) => {
-        //     console.log('Validation failed:', err.errors);
-        // });
-        // try {
-        //     const addAction = await addLomba(data)
-        //     if(addAction?.error) {
-        //         return toast.error(addAction.error)
-        //     }
-        //     reset()
-        //     return toast.success("Login sukses...")
-        // } catch (error) {
-        //     toast.error(error as string)
-        // } finally{
-        //     setIsPending(false)
-        // }
+        try {
+            const addAction = await addLomba(data)
+            if(addAction.status === 'error') {
+                return toast.error(addAction.msg)
+            }
+            setDefault()
+            return toast.success(addAction.msg)
+        } catch (error) {
+            toast.error(error as string)
+        } finally{
+            setIsPending(false)
+        }
     }
     
     
@@ -175,93 +176,239 @@ export const LombaForm = () => {
         <Form {...initForm}>
             <form 
                 onSubmit={handleSubmit(onSubmit)}
-                className="
-                    mt-2 
-                    space-y-4
-                " 
+                className="relative mt-2"
+                
             >
-                <FormField
-                    control={control}
-                    name="lombaName"
-                    render={({field}) =>(
-                        <FormItem>
-                            <FormControl>
-                                <InputText
-                                    {...field}
-                                    type="text"
-                                    placeholder="Masukkan nama lomba"
-                                    label="Nama Lomba"
-                                    disabled={isPending}
-                                    errorMsg={errors.lombaName?.message}
+                <ScrollArea className="h-96 pb-16">
+                    <div 
+                        className="
+                            mt-2 
+                            space-y-4
+                        " 
+                    >
+                        <FormField
+                            control={control}
+                            name="lombaName"
+                            render={({field}) =>(
+                                <FormItem>
+                                    <FormControl>
+                                        <InputText
+                                            {...field}
+                                            type="text"
+                                            placeholder="Masukkan nama lomba"
+                                            label="Nama Lomba"
+                                            disabled={isPending}
+                                            errorMsg={errors.lombaName?.message}
+                                        />
+                                    </FormControl>
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={control}
+                            name="jenisKelamin"
+                            render={({field}) =>(
+                                <FormItem>
+                                    <div
+                                        className="
+                                            flex
+                                            justify-between
+                                            items-center
+                                        "
+                                    >
+                                        <FormLabel>Kelompok Peserta</FormLabel>
+                                        <FormControl>
+                                            <OptionToggle
+                                                initValue={field.value}
+                                                onChange={field.onChange}
+                                                data={jenisKelaminOption}
+                                            />
+                                        </FormControl>
+                                    </div>
+                                    <FormMessage className="text-right"/>
+                                </FormItem>
+                            )}
+                        />
+                        <div
+                            className="
+                                relative
+                                flex
+                                gap-2
+                                justify-between
+                            "
+                        >
+                            <FormField
+                                control={control}
+                                name="isAgeSet"
+                                render={({ field }) => (
+                                    <SwitchForm
+                                        label="Batas Usia"
+                                        desc={`Batas usia peserta lomba, 
+                                            posisi "OFF" untuk semua usia`
+                                        }
+                                        checked={field.value}   
+                                        onChange={(value) => 
+                                            onUsiaToggle(value, field.onChange)
+                                        }
+                                        isError={!!errors.isAgeSet}
+                                        className={field.value ? "w-[82%]" : ""}                            
+                                    />
+                                )}
+                            />
+                            {
+                                isUsiaOption && (
+                                    <div
+                                        className={cn(`
+                                            flex
+                                            flex-col
+                                            gap-2
+                                            transition
+                                            duration-1000`,
+                                        )}
+                                    >
+                                        <FormField
+                                            control={control}
+                                            name="minAge"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormControl>
+                                                        <InputText 
+                                                            {...field} 
+                                                            type="number"
+                                                            value={field.value.toString()}
+                                                            onChange={(e) => 
+                                                                onUsiaValueChange(e.target, field.onChange)
+                                                            }
+                                                            placeholder=""
+                                                            label={"Min"} 
+                                                            disabled={isPending} 
+                                                            errorMsg={errors.minAge?.message}
+                                                            className="max-w-14"  
+                                                        />
+                                                    </FormControl>
+                                                </FormItem>
+                                            )}
+                                        />
+                                        <FormField
+                                            control={control}
+                                            name="maxAge"
+                                            render={({ field }) => (
+                                                <FormItem 
+                                                    className="
+                                                        flex 
+                                                        flex-col 
+                                                        gap-0
+                                                    "
+                                                >
+                                                    <FormControl>
+                                                        <InputText 
+                                                            {...field} 
+                                                            type="number"
+                                                            value={field.value.toString()}
+                                                            onChange={(e) => 
+                                                                onUsiaValueChange(e.target, field.onChange)
+                                                            }
+                                                            placeholder=""
+                                                            label={"Max"} 
+                                                            disabled={isPending} 
+                                                            errorMsg={
+                                                                !isBigger(maxAgeInput, minAgeInput) 
+                                                                && VALIDATE_MESSAGES.IS_SMALLER
+                                                            }
+                                                            className="max-w-14" 
+                                                        />
+                                                    </FormControl>
+                                                    <FormMessage className="p-0 m-0"/>
+                                                </FormItem>
+                                            )}
+                                        />
+                                    </div>
+                                )
+                            }
+                        </div>
+                        
+                        <CardWrapper 
+                            isError={!!errors.startAt}
+                            className="shadow-none"
+                        >
+                            <FormField
+                                control={control}
+                                name="isStartSet"
+                                render={({ field }) => (
+                                    <SwitchForm
+                                        label="Tanggal Mulai"
+                                        desc={`Atur tanggal mulai, "OFF" untuk lomba random`}
+                                        withborder={false}
+                                        checked={field.value} 
+                                        onChange={(value) => 
+                                            onIsDateToggle(value, field.onChange)
+                                        }
+                                    />
+                                )}
+                            />
+                            {
+                                isStartDate && 
+                                (
+                                    <FormField
+                                        control={control}
+                                        name="startAt"
+                                        render={({ field }) => (
+                                            <FormItem 
+                                                className="
+                                                    flex 
+                                                    flex-col
+                                                "
+                                            >
+                                                <DatePicker
+                                                    date={field.value}
+                                                    setDate={field.onChange}
+                                                    placeholder="Pilih tanggal mulai"
+                                                />
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                )
+                            }
+                        </CardWrapper>
+                        <FormField
+                            control={control}
+                            name="isRegister"
+                            render={({ field }) => (
+                                <SwitchForm
+                                    label="Mode Register"
+                                    desc={`Atur untuk peserta apakah perlu melakukan registrasi`}
+                                    checked={field.value}   
+                                    onChange={field.onChange}
                                 />
-                            </FormControl>
-                        </FormItem>
-                    )}
-                />
-                <FormField
-                    control={control}
-                    name="jenisKelamin"
-                    render={({field}) =>(
-                        <FormItem>
-                            <div
+                            )}
+                        />
+                        
+                        
+                        <CardWrapper
+                            isError={!!errors.pos || !!errors.jumlahPos}
+                            className="
+                                shadow-none 
+                                space-y-2
+                            "
+                        >
+                            <div 
                                 className="
-                                    flex
+                                    flex 
                                     justify-between
-                                    items-center
                                 "
                             >
-                                <FormLabel>Kelompok Peserta</FormLabel>
-                                <FormControl>
-                                    <OptionToggle
-                                        initValue={field.value}
-                                        onChange={field.onChange}
-                                        data={jenisKelaminOption}
-                                    />
-                                </FormControl>
-                            </div>
-                            <FormMessage className="text-right"/>
-                        </FormItem>
-                    )}
-                />
-                <div
-                    className="
-                        relative
-                        flex
-                        gap-2
-                        justify-between
-                    "
-                >
-                    <FormField
-                        control={control}
-                        name="isAgeSet"
-                        render={({ field }) => (
-                            <SwitchForm
-                                label="Batas Usia"
-                                desc={`Batas usia peserta lomba, 
-                                    posisi "OFF" untuk semua usia`
-                                }
-                                checked={field.value}   
-                                onChange={(value) => 
-                                    onUsiaToggle(value, field.onChange)
-                                }
-                                className={field.value ? "w-[82%]" : ""}                            
-                            />
-                        )}
-                    />
-                    {
-                        isUsiaOption && (
-                            <div
-                                className={cn(`
-                                    flex
-                                    flex-col
-                                    gap-2
-                                    transition
-                                    duration-1000`,
-                                )}
-                            >
+                                <div>
+                                    <FormLabel>
+                                        Pos
+                                    </FormLabel>
+                                    <FormDescription>
+                                        Atur banyaknya titik pos lomba
+                                    </FormDescription>
+                                </div>
                                 <FormField
                                     control={control}
-                                    name="minAge"
+                                    name="jumlahPos"
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormControl>
@@ -270,290 +417,148 @@ export const LombaForm = () => {
                                                     type="number"
                                                     value={field.value.toString()}
                                                     onChange={(e) => 
-                                                        onUsiaValueChange(e.target, field.onChange)
+                                                        onJumlahPosChange(e.target, field.onChange)
                                                     }
-                                                    placeholder=""
-                                                    label={"Min"} 
+                                                    placeholder="Masukkan jumlah Pos lomba"
+                                                    label={"Jumlah Pos"} 
                                                     disabled={isPending} 
-                                                    errorMsg={errors.minAge?.message}
-                                                    className="max-w-14"  
+                                                    errorMsg={errors.jumlahPos?.message}
+                                                    className="max-w-24"  
                                                 />
                                             </FormControl>
                                         </FormItem>
                                     )}
                                 />
+
+                            </div>
+                            <ScrollArea className="h-[105px]">
                                 <FormField
                                     control={control}
-                                    name="maxAge"
+                                    name="isFinish"
                                     render={({ field }) => (
-                                        <FormItem 
-                                            className="
-                                                flex 
-                                                flex-col 
-                                                gap-0
-                                            "
-                                        >
+                                        <FormItem>
                                             <FormControl>
-                                                <InputText 
-                                                    {...field} 
-                                                    type="number"
-                                                    value={field.value.toString()}
-                                                    onChange={(e) => 
-                                                        onUsiaValueChange(e.target, field.onChange)
-                                                    }
-                                                    placeholder=""
-                                                    label={"Max"} 
-                                                    disabled={isPending} 
-                                                    errorMsg={
-                                                        !isBigger(maxAgeInput, minAgeInput) 
-                                                        && VALIDATE_MESSAGES.IS_SMALLER
-                                                    }
-                                                    className="max-w-14" 
-                                                />
+                                                <RadioGroup
+                                                    onValueChange={field.onChange}
+                                                    defaultValue={field.value}
+                                                    className="
+                                                        grid
+                                                        grid-cols-2
+                                                        items-center
+                                                        gap-x-3
+                                                        pt-2
+                                                    "
+                                                >
+                                                {
+                                                    !errors.jumlahPos 
+                                                    && (
+                                                        posOption.map((pos, index) => (
+                                                        <div 
+                                                            key={index}
+                                                            className="
+                                                                relative
+                                                                flex
+                                                                gap-1
+                                                                items-center
+                                                            "
+                                                        >
+                                                            <Hint
+                                                                label="Atur sebagai pos finish"
+                                                                side="top"
+                                                            >
+                                                                <FormItem>
+                                                                    <FormControl>
+                                                                        <Switch
+                                                                            checked={pos === field.value}
+                                                                            onCheckedChange={(isChecked) => 
+                                                                                onIsPosFinishToggle(isChecked, field.onChange, pos)
+                                                                            }
+                                                                        />
+                                                                    </FormControl>
+                                                                </FormItem>
+                                                            </Hint>
+                                                            <FormField
+                                                                name={`pos.${index}.name`}
+                                                                control={control}
+                                                                render={({ field }) => (
+                                                                    <FormItem>
+                                                                        <FormControl>
+                                                                            <input
+                                                                                {...field} 
+                                                                                type="hidden" 
+                                                                                value={pos} 
+                                                                            />
+                                                                        </FormControl>
+                                                                    </FormItem>
+
+                                                                )}
+                                                            />
+                                                            <FormField
+                                                                control={control}
+                                                                name={`pos.${index}.value`} 
+                                                                render={({ field }) => (
+                                                                    <FormItem className="flex gap-0 flex-col justify-start items-start">
+                                                                        <FormControl>
+                                                                            <InputText
+                                                                                {...field}
+                                                                                value={field.value}
+                                                                                type="text"
+                                                                                placeholder={
+                                                                                    getValues('isFinish') === `pos.${index}`
+                                                                                    ? 'Nama Pos Finish'
+                                                                                    : `Nama pos ${index + 1}`
+                                                                                    
+                                                                                }
+                                                                                label={
+                                                                                    getValues('isFinish') === `pos.${index}`
+                                                                                    ? 'Pos Finish'
+                                                                                    : `Pos ${index + 1}`
+                                                                                }
+                                                                                onChange={field.onChange}
+                                                                                errorMsg={errors.pos && errors.pos[index] && errors.pos[index]!.value?.message }
+                                                                            />
+                                                                        </FormControl>
+                                                                        {/* {JSON.stringify({field})}
+                                                                        {JSON.stringify({errorsPos: errors.pos})} */}
+                                                                    </FormItem>
+                                                                )}
+                                                            /> 
+                                                        </div>
+                                                        
+                                                    )))}
+                                                </RadioGroup>
                                             </FormControl>
-                                            <FormMessage className="p-0 m-0"/>
+                                            <FormMessage />
                                         </FormItem>
                                     )}
                                 />
-                            </div>
-                        )
-                    }
-                </div>
-                
-                <div
-                    className={cn(`
-                        flex 
-                        flex-col
-                        gap-2  
-                        justify-between 
-                        rounded-md 
-                        border 
-                        p-3 
-                        shadow-sm
-                        transition
-                        delay-1000
-                        duration-1000
-                        ease-in-out`,
-                    )}
-                >
-                    <FormField
-                        control={control}
-                        name="isStartSet"
-                        render={({ field }) => (
-                            <SwitchForm
-                                label="Tanggal Mulai"
-                                desc={`Atur tanggal mulai, "OFF" untuk lomba random`}
-                                withborder={false}
-                                checked={field.value}   
-                                onChange={(value) => 
-                                    onIsDateToggle(value, field.onChange)
-                                }
-                            />
-                        )}
-                    />
-                    {
-                        isStartDate && 
-                        (
-                            <FormField
-                                control={control}
-                                name="startAt"
-                                render={({ field }) => (
-                                    <FormItem 
-                                        className="
-                                            flex 
-                                            flex-col
-                                        "
-                                    >
-                                        <DatePicker
-                                            date={field.value}
-                                            setDate={field.onChange}
-                                            placeholder="Pilih tanggal mulai"
-                                        />
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                        )
-                    }
-                </div>
-                <FormField
-                    control={control}
-                    name="isRegister"
-                    render={({ field }) => (
-                        <SwitchForm
-                            label="Mode Register"
-                            desc={`Atur untuk peserta apakah perlu melakukan registrasi`}
-                            checked={field.value}   
-                            onChange={field.onChange}
-                        />
-                    )}
-                />
-                
-                
-                <CardWrapper
-                    className="
-                        shadow-none 
-                        space-y-2
-                    "
-                >
-                    <div 
-                        className="
-                            flex 
-                            justify-between
-                        "
-                    >
-                        <FormLabel>
-                            Atur Pos
-                        </FormLabel>
-                        <FormField
-                            control={control}
-                            name="jumlahPos"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormControl>
-                                        <InputText 
-                                            {...field} 
-                                            type="number"
-                                            value={field.value.toString()}
-                                            onChange={(e) => 
-                                                onJumlahPosChange(e.target, field.onChange)
-                                            }
-                                            placeholder="Masukkan jumlah Pos lomba"
-                                            label={"Jumlah Pos"} 
-                                            disabled={isPending} 
-                                            errorMsg={errors.jumlahPos?.message}
-                                            className="max-w-24"  
-                                        />
-                                    </FormControl>
-                                </FormItem>
-                            )}
+                            </ScrollArea>    
+                        </CardWrapper>
+                        
+                        <ButtonAction 
+                            type="submit" 
+                            variant="text"
+                            mode="primary"
+                            disabled={
+                                isPending 
+                                || Object.keys(errors).length > 0 
+                                || !isBigger(maxAgeInput, minAgeInput)
+                            }
+                            isPending={isPending}
+                            label={"Simpan"}
+                            className="absolute bottom-2"
                         />
 
                     </div>
-                    <ScrollArea className="h-[105px]">
-                        <FormField
-                            control={control}
-                            name="isFinish"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormControl>
-                                        <RadioGroup
-                                            onValueChange={field.onChange}
-                                            defaultValue={field.value}
-                                            className="
-                                                grid
-                                                grid-cols-2
-                                                items-center
-                                                gap-x-3
-                                                pt-2
-                                            "
-                                        >
-                                        {
-                                            !errors.jumlahPos 
-                                            && (
-                                                posOption.map((pos, index) => (
-                                                <div 
-                                                    key={index}
-                                                    className="
-                                                        relative
-                                                        flex
-                                                        gap-1
-                                                        items-center
-                                                    "
-                                                >
-                                                    <Hint
-                                                        label="Atur sebagai pos finish"
-                                                        side="top"
-                                                    >
-                                                        <FormItem>
-                                                            <FormControl>
-                                                                <Switch
-                                                                    checked={pos === field.value}
-                                                                    onCheckedChange={(isChecked) => 
-                                                                        onIsPosFinishToggle(isChecked, field.onChange, pos)
-                                                                    }
-                                                                />
-                                                            </FormControl>
-                                                        </FormItem>
-                                                    </Hint>
-                                                    <FormField
-                                                        name={`pos.${index}.name`}
-                                                        control={control}
-                                                        render={({ field }) => (
-                                                            <FormItem>
-                                                                <FormControl>
-                                                                    <input
-                                                                        {...field} 
-                                                                        type="hidden" 
-                                                                        value={pos} 
-                                                                    />
-                                                                </FormControl>
-                                                            </FormItem>
-
-                                                        )}
-                                                    />
-                                                    <FormField
-                                                        control={control}
-                                                        name={`pos.${index}.value`} 
-                                                        render={({ field }) => (
-                                                            <FormItem className="flex gap-0 flex-col justify-start items-start">
-                                                                <FormControl>
-                                                                    <InputText
-                                                                        {...field}
-                                                                        value={field.value}
-                                                                        type="text"
-                                                                        placeholder={
-                                                                            getValues('isFinish') === `pos.${index}`
-                                                                            ? 'Nama Pos Finish'
-                                                                            : `Nama pos ${index + 1}`
-                                                                            
-                                                                        }
-                                                                        label={
-                                                                            getValues('isFinish') === `pos.${index}`
-                                                                            ? 'Pos Finish'
-                                                                            : `Pos ${index + 1}`
-                                                                        }
-                                                                        onChange={field.onChange}
-                                                                        errorMsg={errors.pos && errors.pos[index] && errors.pos[index]!.value?.message }
-                                                                    />
-                                                                </FormControl>
-                                                                {/* {JSON.stringify({field})}
-                                                                {JSON.stringify({errorsPos: errors.pos})} */}
-                                                            </FormItem>
-                                                        )}
-                                                    /> 
-                                                </div>
-                                                
-                                            )))}
-                                        </RadioGroup>
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                    </ScrollArea>    
-                </CardWrapper>
-                
-                <ButtonAction 
-                    type="submit" 
-                    variant="text"
-                    mode="primary"
-                    disabled={
-                        isPending 
-                        || Object.keys(errors).length > 0 
-                        || !isBigger(maxAgeInput, minAgeInput)
-                    }
-                    isPending={isPending}
-                    label={"Simpan"}
-                />
+                </ScrollArea>
                 
                 {/* DEBUGING */}
-                <div className="flex flex-col gap-1">
+                {/* <div className="flex flex-col gap-1">
                     <p>{JSON.stringify({isPending: isPending})}</p>
                     <p>{JSON.stringify({isErrors: Object.keys(errors).length > 0})}</p>
                     <p>{JSON.stringify({errors: errors})}</p>
                     <p>{JSON.stringify({isDateStart: getValues("isStartSet")})}</p>
-                </div>
+                </div> */}
                 
             </form>
         </Form>

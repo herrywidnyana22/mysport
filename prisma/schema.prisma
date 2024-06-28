@@ -19,6 +19,12 @@ enum Genre {
   Gabungan
 }
 
+enum LombaStatus {
+  Ongoing
+  InProgress
+  Finished
+}
+
 model VerificationToken {
   id       String   @id @default(dbgenerated()) @db.Uuid
   username String   @unique
@@ -54,23 +60,24 @@ model Category {
 }
 
 model Lomba {
-  id         String    @id @default(dbgenerated()) @db.Uuid
-  lombaName  String    @unique
-  genre      Genre     @default(Gabungan)
-  isRegister Boolean   @default(false)
-  isDateSet  Boolean   @default(true)
+  id         String      @id @default(dbgenerated()) @db.Uuid
+  lombaName  String      @unique
+  genre      Genre       @default(Gabungan)
+  isRegister Boolean     @default(false)
+  isDateSet  Boolean     @default(true)
   startAt    DateTime?
   startTime  String?
-  isAgeSet   Boolean   @default(false)
+  isAgeSet   Boolean     @default(false)
   minAge     Int?
   maxAge     Int?
-  isEnded    Boolean   @default(false)
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
+  isEnded    Boolean     @default(false)
+  status     LombaStatus @default(Ongoing)
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
   peserta    Peserta[]
   pos        Pos[]
-  categoryID String?   @db.Uuid
-  category   Category? @relation(fields: [categoryID], references: [id], onDelete: SetNull)
+  categoryID String?     @db.Uuid
+  category   Category?   @relation(fields: [categoryID], references: [id], onDelete: SetNull)
 }
 
 model Pos {

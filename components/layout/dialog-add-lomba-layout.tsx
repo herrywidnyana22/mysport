@@ -21,6 +21,7 @@ import { InputText } from "@/components/ui/input-text"
 import { ButtonAction } from "@/components/ui/button-action"
 import { LombaForm } from "../ui/lomba-form"
 import { Separator } from "@radix-ui/react-dropdown-menu"
+import { ScrollArea } from "../ui/scroll-area"
 
 
 export const DialogAddLomba = () => {
@@ -66,7 +67,6 @@ export const DialogAddLomba = () => {
             </DialogTrigger>
             <DialogContent 
                 className="
-                    h-100%
                     sm:max-w-[425px]
                 "
             >

@@ -1,4 +1,5 @@
 
+import { getLombaByName } from '@/services/lomba/get'
 import * as z from 'zod'
 
 export const VALIDATE_MESSAGES = {
@@ -68,7 +69,21 @@ export const LombaSchema = z
     .object({
         lombaName: z
             .string()
-            .min(1, VALIDATE_MESSAGES.REQUIRED),
+            .min(1, VALIDATE_MESSAGES.REQUIRED)
+            .refine(async(lombaName) => {
+                try {
+                    const getLomba = await getLombaByName(lombaName) 
+                    if(getLomba?.data.length > 0){
+                        return false
+                    }
+
+                    return true
+                } catch (error) {
+                    return true
+                }
+            },{
+                message: VALIDATE_MESSAGES.EXIST,
+            }),
         isRegister: z
             .boolean(),
         isStartSet: z

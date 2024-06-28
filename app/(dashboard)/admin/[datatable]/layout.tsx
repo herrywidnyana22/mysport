@@ -5,11 +5,14 @@ import { HeaderLayout } from "@/components/layout/header-layout"
 import { MenuLayout } from "@/components/layout/menu-layout"
 import { useCurrentUser } from "@/hooks/use-current-user"
 
-type AdminLayoutProps ={
+type MainAdminLayoutProps ={
     children: React.ReactNode
+    params:{
+        datatable: string
+    }
 }
 
-const AdminLayout = ({children}:AdminLayoutProps) =>{
+const MainAdminLayout = ({children, params}:MainAdminLayoutProps) =>{
     const user = useCurrentUser()
 
     return(
@@ -30,13 +33,13 @@ const AdminLayout = ({children}:AdminLayoutProps) =>{
                 "
             >
                 
-                <HeaderLayout/>
+                <HeaderLayout title="Lomba"/>
                 <CardLayout/>
-                <MenuLayout/>
+                <MenuLayout activeMenu = {params.datatable}/>
                 { children }
             </div>
         </main>
     )
 }
 
-export default AdminLayout
+export default MainAdminLayout

@@ -8,6 +8,7 @@ type SwitchFormProps = {
     onChange: (checked: boolean) => void
     desc?: string
     withborder?: boolean
+    isError?: boolean
     className?: string
 }
 
@@ -17,6 +18,7 @@ export const SwitchForm = ({
     onChange,
     desc,
     withborder=true,
+    isError,
     className
 }: SwitchFormProps) => {
     return ( 
@@ -35,6 +37,7 @@ export const SwitchForm = ({
                 rounded-md 
                 border 
                 p-3 `,
+                isError && "border-rose-400",
                 className
             )}
         >

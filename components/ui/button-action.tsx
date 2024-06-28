@@ -39,6 +39,7 @@ export const ButtonAction = ({
                 text-sm 
                 text-white`,
                 variant==="text" && "w-full",
+                variant==="icon" && "px-2",
                 className
             )}
         >

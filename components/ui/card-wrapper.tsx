@@ -2,9 +2,15 @@ import { cn } from "@/lib/utils";
 
 type CardWrapperProps = {
     children: React.ReactNode
+    isError?: boolean
     className?: string
 }
-export const CardWrapper = ({children, className}: CardWrapperProps) => {
+export const CardWrapper = ({
+    children,
+    isError, 
+    className
+
+}: CardWrapperProps) => {
     return ( 
         <div 
             className={cn(`
@@ -15,6 +21,7 @@ export const CardWrapper = ({children, className}: CardWrapperProps) => {
                 bg-card 
                 text-card-foreground 
                 shadow-md`,
+                isError && "border-rose-400",
                 className
             )}
         >
