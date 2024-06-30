@@ -27,6 +27,40 @@ export const getLombaCount = async() =>{
     }
 }
 
+export const getLombaByID = async(id: string) =>{
+    try {
+        const getLomba = db.lomba.findUnique({
+            where:{
+                id
+            }
+        })
+
+        if(!getLomba){
+            return respon({
+                code: 404,
+                status:"error",
+                msg: "lomba not found",
+                data: null
+            })
+        }
+
+        return respon({
+            code: 200,
+            status: "success",
+            data: getLomba,
+            msg: "lomba retrieved successfully",
+        })
+
+    } catch (error) {
+        respon({
+            code: 500,
+            status: "error",
+            msg: "An error occurred while retrieving lomba",
+            data: null
+        })
+    }
+}
+
 export const getLombaByName = async(lombaName: string) =>{
     try {
         const getLomba = db.lomba.findUnique({
@@ -100,6 +134,4 @@ export const getLombaData = async() =>{
             data: null
         })
     }
-
-    
 }

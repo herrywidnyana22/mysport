@@ -1,6 +1,7 @@
 import { MoreHorizontal, Pencil, Trash2 } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "./dropdown-menu";
 import { Button } from "./button";
+import { Alert } from "../layout/alert";
 
 type OptionActionProps = {
     deleteAction: () => void
@@ -23,12 +24,20 @@ export const OptionAction= ({
             <DropdownMenuLabel>Action</DropdownMenuLabel>
             
             <DropdownMenuItem>
-                Ubah ini
+              Ubah ini
             </DropdownMenuItem>
             <DropdownMenuSeparator/>
-            <DropdownMenuItem >
+            <Alert
+              action={deleteAction}
+              title="Yakin ingin menghapus data ini?"
+              desc="Menghapus lomba akan menghapus seluruh pos 
+              dan menonaktifkan panitia yg bertugas, 
+              tindakan ini tidak bisa dibatalkan"
+            >
+              <DropdownMenuItem >
                 Hapus ini
-            </DropdownMenuItem>
+              </DropdownMenuItem>
+            </Alert>
           </DropdownMenuContent>
         </DropdownMenu>
     );

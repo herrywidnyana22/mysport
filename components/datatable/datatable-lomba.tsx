@@ -1,31 +1,11 @@
 'use client'
 
 import * as React from "react"
-import {
-  ColumnDef,
-  ColumnFiltersState,
-  SortingState,
-  VisibilityState,
-  flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  useReactTable,
-} from "@tanstack/react-table"
+
 import { ArrowUpDown, ChevronDown, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, CirclePlus, Flag, MoreHorizontal, Trash2 } from "lucide-react"
  
-import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+
 import { Input } from "@/components/ui/input"
 import {
   Table,
@@ -35,6 +15,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+
 import { CardWrapper } from "@/components/ui/card-wrapper";
 import { Lomba, Pos } from "@prisma/client";
 import { format } from "date-fns"
@@ -43,6 +24,7 @@ import { OptionAction } from "@/components/ui/option-action"
 import { ButtonAction } from "@/components/ui/button-action"
 import { Separator } from "@/components/ui/separator"
 import { PopoverFilterTable } from "@/components/ui/popover-filter"
+import { useState } from "react"
 
 type DatatableLombaProps = {
     data: Lomba[]
@@ -65,6 +47,8 @@ export const tableHeadItem=[
 ]
 
 export const TableLomba = ({data}: DatatableLombaProps) => {
+    const [isPending, setIsPending] = useState(false)
+
     console.log({data})
     return ( 
         <CardWrapper
@@ -155,7 +139,7 @@ export const TableLomba = ({data}: DatatableLombaProps) => {
                                     }
                                 </TableCell>
                                 <TableCell className="space-y-2">
-                                    <div className="flex justify-between">
+                                    <div className="flex gap-2 justify-between">
                                         { 
                                             item.isRegister
                                             ? <Badge variant="Finished">Register</Badge> 
