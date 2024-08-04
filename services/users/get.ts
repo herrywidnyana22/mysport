@@ -150,7 +150,7 @@ export const getPanitiaCount = async() =>{
             data: userCount
         })
     } catch (error) {
-        throw new ApiError({
+        return new ApiError({
             code: 500,
             status: "error",
             msg: "An error occurred while retrieving users",

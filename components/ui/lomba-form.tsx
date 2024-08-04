@@ -22,12 +22,6 @@ import { Hint } from "./hint";
 import { addLomba } from "@/services/lomba/add";
 
 
-// type BaseFormData = z.infer<typeof LombaSchema>;
-// type FormDataLomba = BaseFormData & {
-//     pos: { value: string, name: string }[],
-//     isFinish: string
-// };
-
 export type FormDataLomba = z.infer<ReturnType<typeof GenerateDynamicSchemaByPos>>
 
 const DEFAULT_JUMLAH_POS = 1
@@ -37,8 +31,6 @@ export const LombaForm = () => {
 
 
     const formSchema = GenerateDynamicSchemaByPos(jumlahPos)  
-    // const initForm = useForm({
-        // resolver: zodResolver(LombaSchema.extend(formSchema)),
         
     const initForm = useForm<FormDataLomba>({
         resolver: zodResolver(formSchema),
@@ -551,14 +543,6 @@ export const LombaForm = () => {
 
                     </div>
                 </ScrollArea>
-                
-                {/* DEBUGING */}
-                {/* <div className="flex flex-col gap-1">
-                    <p>{JSON.stringify({isPending: isPending})}</p>
-                    <p>{JSON.stringify({isErrors: Object.keys(errors).length > 0})}</p>
-                    <p>{JSON.stringify({errors: errors})}</p>
-                    <p>{JSON.stringify({isDateStart: getValues("isStartSet")})}</p>
-                </div> */}
                 
             </form>
         </Form>

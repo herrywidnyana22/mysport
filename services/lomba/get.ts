@@ -127,7 +127,8 @@ export const getLombaData = async() =>{
             data: lombaData
         })
     } catch (error) {
-        throw new ApiError({
+        console.log({error})
+        return respon({
             code: 500,
             status: "error",
             msg: "Error when get lomba data",

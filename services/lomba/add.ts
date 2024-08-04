@@ -70,7 +70,7 @@ export const addLomba = async (formData: FormDataLomba) => {
             msg: "Berhasil menambahkan lomba baru",
         });
     } catch (error) {
-        throw new ApiError({
+        return respon({
             code: 500,
             status: "error",
             msg: "An error occurred while getting lomba name",

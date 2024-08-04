@@ -64,6 +64,7 @@ export function DatePicker({
         className="
           w-auto 
           p-1
+          pointer-events-auto
         " 
       >
         <Calendar

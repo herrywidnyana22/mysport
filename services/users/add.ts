@@ -34,7 +34,7 @@ export const addUser = async(formData: z.infer<typeof RegisterpSchema>) =>{
         const isEmailExist = await getUserByEmail(email)
         const isUsernameExist = await getUserByUsername(username)
 
-        if(isEmailExist.data){
+        if(isEmailExist?.data){
             throw new ApiError({
                 code: 409,
                 status: "error",
@@ -74,7 +74,7 @@ export const addUser = async(formData: z.infer<typeof RegisterpSchema>) =>{
         })
         
     } catch (error) {
-        respon({
+        return new ApiError({
             code: 500,
             status:"error",
             msg:"An error occurred while creating new user",
